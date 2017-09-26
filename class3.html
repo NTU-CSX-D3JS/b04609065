@@ -1,0 +1,82 @@
+<html>
+<head>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+
+<script>
+//url = "https://ntu-csx-d3js.github.io/pecu/student.csv"
+
+var dataset = [100, 22, 25, 6];  
+
+//d3.csv(url, function(data){
+
+	//console.log(data);
+
+	var w = 500; //定義寬
+	var h = 300; //定義高
+/*
+	var m = 20; //定義邊界
+	var n = 50; //定義 Axis 邊界
+
+	var Ymax = d3.max(data, function(d){ return d.BC; });
+	var Ymin = d3.min(data, function(d){ return d.PHD; });
+	var Xmax = d3.max(data, function(d){ return d.Year; });
+	var Xmin = d3.min(data, function(d){ return d.Year; });
+*/
+	//建立 x 軸的尺度
+	//var xScale = d3.scaleLinear().domain([Xmin, Xmax]).range([n, w-n]);
+	var xScale = d3.scale.ordinal().domain(d3.range(dataset.length)).rangeRoundBands([0,w], 0.05);
+	//建立 y 軸的尺度
+	var yScale = d3.scale.linear().domain([0, d3.max(dataset)]).range([0, h]);
+	//var yScale = d3.scaleLinear().domain([Ymin, Ymax]).range([h-n, n]);
+	var cScale = d3.scale.log().domain([d3.min(dataset), d3.max(dataset)]).range([0, 250]);	
+
+	var svg = d3.select("body").append("svg").attr("width", w).attr("height", h);
+
+	svg.selectAll("rect").data(dataset).enter().append("rect").attr("x", function(d, i){
+	    return xScale(i);})
+	   .attr("y", function(d){
+	    return h - yScale(d);})
+	    .attr("width", xScale.rangeBand() )
+	    .attr("height", function(d){
+		return yScale(d);})
+	    .attr("fill", function(d){
+	    return "rgb(" + parseInt (cScale(d) ) + ", 0, 0" + ")"; 
+	    });
+	
+	svg.selectAll("text").data(dataset).enter().append("text")
+	.text(function(d){
+	return d;
+	})
+    	.attr("text-anchor", "middle")
+	.attr("x", function(d, i){
+	    return xScale(i) + xScale.rangeBand() / 2;
+	})
+	.attr("y", function(d){
+	    return h - yScale(d) + 15;
+	})
+	.attr("fill", "white");
+	//D3.js line generator
+	/*
+	var lineBC = d3.line().x(function(d){ return xScale(d.Year); }).y(function(d){ return yScale(d.BC); });
+	var lineMS = d3.line().x(function(d){ return xScale(d.Year); }).y(function(d){ return yScale(d.MS); });
+	var linePHD = d3.line().x(function(d){ return xScale(d.Year); }).y(function(d){ return yScale(d.PHD); });
+
+	var svg = d3.select('body').append('svg').attr('width', w).attr('height', h);
+	var lineChart1 = svg.append("g").append("path").attr("class", "line").attr("stroke", "red").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineBC(data); });
+	var lineChart2 = svg.append("g").append("path").attr("class", "line").attr("stroke", "blue").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineMS(data); });
+	var lineChart3 = svg.append("g").append("path").attr("class", "line").attr("stroke", "black").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return linePHD(data); });
+
+	//Axis
+	var yAxis = d3.axisLeft(yScale);
+	var xAxis = d3.axisBottom(xScale);
+	var XaxisAppend = svg.append("g").attr("class", "axis").attr("transform", "translate(0, "+(h-n)+")").call(xAxis);
+	var YaxisAppend = svg.append("g").attr("class", "axis").attr("transform", "translate("+n+", 0)").call(yAxis);
+*/
+	
+	//});
+</script>
+
+</body>
+</html>
