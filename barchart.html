@@ -1,77 +1,72 @@
 <html>
 <head>
-    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
+
 <style>
-
-h1 {
-    color: rebeccapurple;
-    text-align: center;
-    font-family: Elephant;
-    font-size: 35px;
-}
-
-p {
-    color: black; 
-    text-align: center;
-    font-family: Bookman Old Style;
-    font-size: 15px;
-}
-
-
+.bar { fill: steelblue; }
 
 </style>
 
-
-
 <body>
+  <script>
 
-<h1> Pie Chart: The fuel mix for Hong Kong power generation </h1>
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-<div id="chart"></div>
-<script>
+// set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
 
-var w = 400;
-var h = 400;
-var r = h/2;
-var color = d3.scale.category10();
+  // append the svg object to the body of the page
+// append a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
 
+    // get the data
+url = "https://ntu-csx-d3js.github.io/b04609065/ElectricityConsumption.csv"
+d3.csv(url, function(data){
+  console.log(data);
 
-var data = [{"label":"Coal 52%", "value":52}, 
-		          {"label":"Oil 10%", "value":10}, 
-		          {"label":"Natural Gas 22%", "value":22} , {"label":"Nuclear Energy 11%", "value":11}, {"label":"Other 5%", "value":5}
-                  ]
-                  
+// format the data
+  data.forEach(function(d) {
+    d.no = +d.no;
+  });
 
+ // Scale the range of the data in the domains
+  x.domain(data.map(function(d) { return d.name; }));
+  y.domain([2500, d3.max(data, function(d) { return d.no; })])
 
-var vis = d3.select('#chart').append("svg:svg").data([data]).attr("width", w).attr("height", h).append("svg:g").attr("transform", "translate(" + r + "," + r + ")");
-var pie = d3.layout.pie().value(function(d){return d.value;});
+  // append the rectangles for the bar chart
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.name); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d.no); })
+      .attr("height", function(d) { return height - y(d.no); });
 
-// declare an arc generator function
-var arc = d3.svg.arc().outerRadius(r);
+        // add the x Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
 
-// select paths, use arc generator to draw
-var arcs = vis.selectAll("g.slice").data(pie).enter().append("svg:g").attr("class", "slice");
-arcs.append("svg:path")
-    .attr("fill", function(d, i){
-        return color(i);
-    })
-    .attr("d", function (d) {
-        // log the result of the arc generator to show how cool it is :)
-        console.log(arc(d));
-        return arc(d);
-    });
+ // add the y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
 
-// add the text
-arcs.append("svg:text").attr("transform", function(d){
-			d.innerRadius = 0;
-			d.outerRadius = r;
-    return "translate(" + arc.centroid(d) + ")";}).attr("text-anchor", "middle").text( function(d, i) {
-    return data[i].label;}
-		);
-
+});
 
 </script>
-
 </body>
-</html>
