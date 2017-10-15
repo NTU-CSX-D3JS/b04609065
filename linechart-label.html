@@ -99,6 +99,9 @@ svg.append("text")
       .text("Terajoule(10^12J)")
 
 //labelling multiple lines
+	
+	var y = d3.scaleLinear().range([height, 0]);
+	
 	svg.append("text")
       .attr("transform", "translate("+(width+3)+","+y(data[0].D)+")")
       .attr("dy", ".35em")
