@@ -1,0 +1,138 @@
+<html>
+<head>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<style>
+
+h1 {
+	color: rebeccapurple;
+	text-align: center;
+	font-family: Elephant;
+	font-size: 35px;
+}
+
+p {
+	color: black; 
+	text-align: center;
+	font-family: Bookman Old Style;
+	font-size: 15px;
+}
+
+
+
+</style>
+
+<body>
+
+
+<h1> Line Chart: Hong Kong Electricity Consumption </h1>
+
+
+<script>
+url = "https://ntu-csx-d3js.github.io/b04609065/ElectricityConsumption.csv"
+d3.csv(url, function(data){
+	console.log(data);
+	var w = 800; //定義寬
+	var h = 500; //定義高
+
+	var margin = {
+		top: 20,
+		bottom: 50,
+		left: 100,
+		right: 50
+	}
+
+	var width = w - margin.left - margin.right;
+	var height = h - margin.top - margin.bottom;
+
+	var m = 60; //定義邊界
+	var n = 50; //定義 Axis 邊界
+
+	
+
+// parse the date / time
+var parseTime = d3.timeParse("%d-%b-%y");
+
+
+
+	//建立 x 軸的尺度
+
+	var xScale = d3.scaleTime().domain([new Date("2016-09-01"), new Date("2017-08-01")]).range([margin.left, width]);
+
+	var xAsix = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b"));
+	
+	//建立 y 軸的尺度
+
+
+	var yScale = d3.scaleLinear().domain([0, 11000]).range([h-margin.bottom-margin.top, margin.bottom]);
+	//D3.js line generator
+	var lineD = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.D); });
+	var lineC = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.C); });
+	var lineI = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.I); });
+	var lineE = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.E); });
+
+	var svg = d3.select('body').append('svg').attr('width', w).attr('height', h);
+	var lineChart1 = svg.append("g").append("path").attr("class", "line").attr("stroke", "red").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineD(data); });
+	var lineChart2 = svg.append("g").append("path").attr("class", "line").attr("stroke", "blue").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineC(data); });
+	var lineChart3 = svg.append("g").append("path").attr("class", "line").attr("stroke", "black").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineI(data); });
+	var lineChart4 = svg.append("g").append("path").attr("class", "line").attr("stroke", "yellow").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineE(data); });
+
+//Axis
+	var yScale2 = d3.scaleLinear().domain([0, 11000]).range([430, 50]);
+	var yAxis = d3.axisLeft(yScale2);
+	var xAxis = d3.axisBottom(xScale);
+	var XaxisAppend = svg.append("g").attr("class", "axis").attr("transform", "translate(0, "+(h-n-20)+")").call(xAxis);
+	var YaxisAppend = svg.append("g").attr("class", "axis").attr("transform", "translate("+margin.left+", 0)").call(yAxis);
+
+	svg.append("text")             
+      .attr("transform",
+            "translate(" + 690 + " ," + 
+                           (height+5 ) + ")")
+      .style("text-anchor", "middle")
+      .text("Date");
+
+svg.append("text")            
+      .attr("transform",
+            "translate(" +(margin.left)+ " ," + 30 + ")")
+      .style("text-anchor", "middle", )
+      .text("Terajoule(10^12J)")
+
+//labelling multiple lines
+	svg.append("text")
+      .attr("transform", "translate("+(width+3)+","+y(data[0].D)+")")
+      .attr("dy", ".35em")
+      .attr("text-anchor", "start")
+      .style("fill", "red")
+      .text("Domestic");
+
+      svg.append("text")
+      .attr("transform", "translate("+(width+3)+","+y(data[0].C)+")")
+      .attr("dy", ".35em")
+      .attr("text-anchor", "start")
+      .style("fill", "blue")
+      .text("Commercial");
+
+      svg.append("text")
+      .attr("transform", "translate("+(width+3)+","+y(data[0].I)+")")
+      .attr("dy", ".35em")
+      .attr("text-anchor", "start")
+      .style("fill", "black")
+      .text("Industrial");
+
+      svg.append("text")
+      .attr("transform", "translate("+(width+3)+","+y(data[0].E)+")")
+      .attr("dy", ".35em")
+      .attr("text-anchor", "start")
+      .style("fill", "yellow")
+      .text("Exports");
+
+
+
+});
+  
+ 
+</script>
+
+</body>
+</html>
