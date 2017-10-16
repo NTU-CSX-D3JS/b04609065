@@ -67,16 +67,16 @@ var parseTime = d3.timeParse("%d-%b-%y");
 
 	var yScale = d3.scaleLinear().domain([0, 11000]).range([h-margin.bottom-margin.top, margin.bottom]);
 	//D3.js line generator
-	var lineD = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.D); });
-	var lineC = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.C); });
-	var lineI = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.I); });
-	var lineE = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.E); });
+	var lineD = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.D); }).curve(d3.curveCardinal);
+	var lineC = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.C); }).curve(d3.curveCardinal);
+	var lineI = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.I); }).curve(d3.curveCardinal);
+	var lineE = d3.line().x(function(d){ return xScale(parseTime(d.Date));}).y(function(d){ return yScale(d.E); }).curve(d3.curveCardinal);
 
 	var svg = d3.select('body').append('svg').attr('width', w).attr('height', h);
 	var lineChart1 = svg.append("g").append("path").attr("class", "line").attr("stroke", "red").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineD(data); });
 	var lineChart2 = svg.append("g").append("path").attr("class", "line").attr("stroke", "blue").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineC(data); });
 	var lineChart3 = svg.append("g").append("path").attr("class", "line").attr("stroke", "black").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineI(data); });
-	var lineChart4 = svg.append("g").append("path").attr("class", "line").attr("stroke", "yellow").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineE(data); });
+	var lineChart4 = svg.append("g").append("path").attr("class", "line").attr("stroke", "orange").attr("stroke-width", 3).attr("fill", "none").attr("d", function(d){ return lineE(data); });
 
 //Axis
 	var yScale2 = d3.scaleLinear().domain([0, 11000]).range([430, 50]);
@@ -85,7 +85,7 @@ var parseTime = d3.timeParse("%d-%b-%y");
 	var XaxisAppend = svg.append("g").attr("class", "axis").attr("transform", "translate(0, "+(h-n-20)+")").call(xAxis);
 	var YaxisAppend = svg.append("g").attr("class", "axis").attr("transform", "translate("+margin.left+", 0)").call(yAxis);
 
-	svg.append("text")             
+    svg.append("text")             
       .attr("transform",
             "translate(" + 690 + " ," + 
                            (height+5 ) + ")")
@@ -96,38 +96,44 @@ svg.append("text")
       .attr("transform",
             "translate(" +(margin.left)+ " ," + 30 + ")")
       .style("text-anchor", "middle", )
-      .text("Terajoule(10^12J)")
+      .text("Terajoule(10^12J)");
 
 //labelling multiple lines
 	
-	var y = d3.scaleLinear().range([height, 0]);
-	
-	svg.append("text")
-      .attr("transform", "translate("+(width+3)+","+y(data[0].D)+")")
+    //var y = d3.scaleLinear().range([height, 0]);
+    //console.log(y);
+    //console.log(data.length);
+    //console.log(data[0].D);
+    //console.log(y(data[0].D));
+    
+    var last_one = data.length - 1;
+
+    svg.append("text")
+      .attr("transform", "translate("+(width+3)+","+yScale(data[last_one].D)+")")
       .attr("dy", ".35em")
       .attr("text-anchor", "start")
       .style("fill", "red")
       .text("Domestic");
 
       svg.append("text")
-      .attr("transform", "translate("+(width+3)+","+y(data[0].C)+")")
+      .attr("transform", "translate("+(width+3)+","+yScale(data[last_one].C)+")")
       .attr("dy", ".35em")
       .attr("text-anchor", "start")
       .style("fill", "blue")
       .text("Commercial");
 
       svg.append("text")
-      .attr("transform", "translate("+(width+3)+","+y(data[0].I)+")")
+      .attr("transform", "translate("+(width+3)+","+yScale(data[last_one].I)+")")
       .attr("dy", ".35em")
       .attr("text-anchor", "start")
       .style("fill", "black")
       .text("Industrial");
 
       svg.append("text")
-      .attr("transform", "translate("+(width+3)+","+y(data[0].E)+")")
+      .attr("transform", "translate("+(width+3)+","+yScale(data[last_one].E)+")")
       .attr("dy", ".35em")
       .attr("text-anchor", "start")
-      .style("fill", "yellow")
+      .style("fill", "orange")
       .text("Exports");
 
 
@@ -139,3 +145,4 @@ svg.append("text")
 
 </body>
 </html>
+
