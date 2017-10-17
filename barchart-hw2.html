@@ -1,3 +1,4 @@
+
 <html>
 <head>
     <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -63,6 +64,8 @@ d3.csv(url, function(data){
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.name); })
       .attr("width", x.bandwidth())
+      .attr("y", function(d){ return height;})
+      .transition().duration(2000)
       .attr("y", function(d) { return y(d.no); })
       .attr("height", function(d) { return height - y(d.no); });
       
@@ -81,12 +84,13 @@ d3.csv(url, function(data){
       .style("text-anchor", "middle", )
       .text("Terajoule(10^12J)")
 
+  /*
   svg.append("rect").attr("x",7).attr("y",0).attr("width",800)
 	    .attr("height", 320)
 	   .attr("fill", "white")
 	   .transition().duration(5000)
 	   .attr("height", 0);
-
+*/
 });
 
 </script>
